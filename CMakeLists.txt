@@ -49,6 +49,7 @@ if(APPLE)
 	include_directories(/usr/local/opt/openssl/include)
 	link_directories(/usr/local/opt/openssl/lib)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+	include_directories(/usr/include/libxml2)
 elseif(WIN32)
 endif()
 
