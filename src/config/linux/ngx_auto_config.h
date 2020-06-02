@@ -529,7 +529,7 @@
 
 
 #ifndef NGX_PREFIX
-#define NGX_PREFIX  "/usr/local/zyk/nginx"
+#define NGX_PREFIX  "/usr/local/zyk/nginx/"
 #endif
 
 
