@@ -17,6 +17,7 @@ addons:
       - geoip
       - gd
       - pcre
+    update: true
 
 script:
   - mkdir build && cd build
