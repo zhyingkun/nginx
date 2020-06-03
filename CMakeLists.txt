@@ -39,13 +39,12 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 endif()
 
 
+include_directories(/usr/include/libxml2)
 if(APPLE)
 	include_directories(/usr/local/include)
 	link_directories(/usr/local/lib)
 	include_directories(/usr/local/opt/openssl/include)
 	link_directories(/usr/local/opt/openssl/lib)
-elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
-	include_directories(/usr/include/libxml2)
 endif()
 
 
