@@ -10,7 +10,7 @@
 2. 所有 Nginx 源码来自 [nginx 官方](https://nginx.org)1.18.0 版本
 3. 仅保留 Mac/Linux 两个平台，去除了其他平台特定代码（为了足够简单）
 4. 增加了源码注释，支持 Debug/Release 编译模式
-5. 整个工程编译构建采用 cmake 来管理，支持跨平台（可以在树莓派上正常 cmake+make）
+5. 整个工程编译构建采用 cmake 来管理
 
 ---
 
