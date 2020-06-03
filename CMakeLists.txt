@@ -36,10 +36,6 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 	set(CMAKE_C_FLAGS         "-W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -Wl,-E")
 	set(CMAKE_C_FLAGS_DEBUG   "-g")
 	set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
-elseif(WIN32)
-	set(CMAKE_C_FLAGS         "-Wall")
-	# set(CMAKE_C_FLAGS_DEBUG   "")
-	set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
 endif()
 
 
@@ -50,9 +46,10 @@ if(APPLE)
 	link_directories(/usr/local/opt/openssl/lib)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 	include_directories(/usr/include/libxml2)
-elseif(WIN32)
 endif()
 
+
+# = Nginx =====================================================================
 set(SRC_ALL)
 
 macro(add_folder_files_to_group source_dir group_name)
@@ -72,13 +69,14 @@ endmacro(add_files_to_group)
 
 add_folder_files_to_group("./src/core" "core")
 add_folder_files_to_group("./src/event" "event")
+
 add_folder_files_to_group("./src/event/openssl" "event\\\\openssl")
+add_folder_files_to_group("./src/core/threads" "core\\\\threads")
+add_folder_files_to_group("./src/os/unix/threads" "os\\\\unix\\\\threads")
+add_folder_files_to_group("./src/os/unix" "os\\\\unix")
 
 if(APPLE)
 	add_folder_files_to_group("./src/config/darwin" "config")
-	add_folder_files_to_group("./src/core/threads" "core\\\\threads")
-	add_folder_files_to_group("./src/os/unix/threads" "os\\\\unix\\\\threads")
-	add_folder_files_to_group("./src/os/unix" "os\\\\unix")
 	add_folder_files_to_group("./src/os/unix/darwin" "os\\\\unix\\\\darwin")
 	add_files_to_group("event\\\\modules"
 		./src/event/modules/ngx_select_module.c
@@ -87,22 +85,11 @@ if(APPLE)
 	)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 	add_folder_files_to_group("./src/config/linux" "config")
-	add_folder_files_to_group("./src/core/threads" "core\\\\threads")
-	add_folder_files_to_group("./src/os/unix/threads" "os\\\\unix\\\\threads")
-	add_folder_files_to_group("./src/os/unix" "os\\\\unix")
 	add_folder_files_to_group("./src/os/unix/linux" "os\\\\unix\\\\linux")
 	add_files_to_group("event\\\\modules"
 		./src/event/modules/ngx_select_module.c
 		./src/event/modules/ngx_poll_module.c
 		./src/event/modules/ngx_epoll_module.c
-	)
-elseif(WIN32)
-	add_folder_files_to_group("./src/os/win32" "os\\\\win32")
-	include_directories(./src/event/modules)
-	add_files_to_group("event\\\\modules"
-		./src/event/modules/ngx_win32_select_module.c
-		./src/event/modules/ngx_win32_poll_module.c
-		./src/event/modules/ngx_iocp_module.c
 	)
 endif()
 
@@ -116,39 +103,59 @@ if(APPLE)
 	target_link_libraries(${PROJECT_NAME} pcre z ssl crypto)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 	target_link_libraries(${PROJECT_NAME} pcre z dl pthread crypt ssl crypto)
-elseif(WIN32)
-	target_link_libraries(${PROJECT_NAME} pcre z)
 endif()
 
-function(add_nginx_module module_dir)
-	include_directories(./src/${module_dir})
-	aux_source_directory(./src/${module_dir} MODULE_SRC_)
-	source_group(src FILES ${MODULE_SRC_})
-	set(MODULE_NAME_ ${module_dir}_module)
-	add_library(${MODULE_NAME_} MODULE ${MODULE_SRC_})
-	if(APPLE)
-		target_link_options(${MODULE_NAME_} PUBLIC -Wl,-undefined,dynamic_lookup)
-	endif(APPLE)
-	set_target_properties(${MODULE_NAME_} PROPERTIES
-		OUTPUT_NAME "ngx_${module_dir}_module"
-		PREFIX ""
-		POSITION_INDEPENDENT_CODE ON
-	)
-	install(TARGETS ${MODULE_NAME_}
-		RUNTIME DESTINATION sbin
-		LIBRARY DESTINATION modules
-		ARCHIVE DESTINATION lib
-	)
-endfunction(add_nginx_module)
 
-include_directories(
-	./src/mail/imap
-	./src/mail/pop3
-	./src/mail/smtp
+# = Mail Module ===============================================================
+set(SRC_ALL)
+
+add_folder_files_to_group("./src/mail" "mail")
+add_folder_files_to_group("./src/mail/imap" "mail\\\\imap")
+add_folder_files_to_group("./src/mail/pop3" "mail\\\\pop3")
+add_folder_files_to_group("./src/mail/smtp" "mail\\\\smtp")
+
+add_folder_files_to_group("./src/mail/openssl" "mail\\\\openssl")
+
+add_library(mail_module MODULE ${SRC_ALL})
+if(APPLE)
+	target_link_options(mail_module PUBLIC -Wl,-undefined,dynamic_lookup)
+endif(APPLE)
+set_target_properties(mail_module PROPERTIES
+	OUTPUT_NAME "ngx_mail_module"
+	PREFIX ""
+	POSITION_INDEPENDENT_CODE ON
 )
-add_nginx_module(mail)
-add_nginx_module(stream)
 
+
+# = Stream Module =============================================================
+set(SRC_ALL)
+
+add_folder_files_to_group("./src/stream" "stream")
+
+add_folder_files_to_group("./src/stream/openssl" "stream\\\\openssl")
+
+add_library(stream_module MODULE ${SRC_ALL})
+if(APPLE)
+	target_link_options(stream_module PUBLIC -Wl,-undefined,dynamic_lookup)
+endif(APPLE)
+set_target_properties(stream_module PROPERTIES
+	OUTPUT_NAME "ngx_stream_module"
+	PREFIX ""
+	POSITION_INDEPENDENT_CODE ON
+)
+
+
+install(TARGETS ${PROJECT_NAME} mail_module stream_module
+	RUNTIME DESTINATION sbin
+	LIBRARY DESTINATION modules
+	ARCHIVE DESTINATION lib
+)
+install(DIRECTORY conf DESTINATION .)
+install(DIRECTORY etc/docs/html DESTINATION .)
+install(DIRECTORY etc/logs DESTINATION .)
+
+
+# = Http Modules ==============================================================
 function(add_http_module module_dir module_name)
 	include_directories(./src/http/modules/${module_dir})
 	aux_source_directory(./src/http/modules/${module_dir} MODULE_SRC_)
@@ -163,7 +170,9 @@ function(add_http_module module_dir module_name)
 		PREFIX ""
 		POSITION_INDEPENDENT_CODE ON
 	)
-	target_link_libraries(${MODULE_NAME_} ${ARGN})
+	if(ARGN)
+		target_link_libraries(${MODULE_NAME_} ${ARGN})
+	endif(ARGN)
 	install(TARGETS ${MODULE_NAME_}
 		RUNTIME DESTINATION sbin
 		LIBRARY DESTINATION modules
@@ -175,6 +184,8 @@ add_http_module(xslt xslt_filter xml2 xslt exslt)
 add_http_module(image image_filter gd)
 add_http_module(geoip geoip GeoIP)
 
+
+# = Stream Modules ============================================================
 function(add_stream_module module_dir)
 	aux_source_directory(./src/stream/${module_dir} MODULE_SRC_)
 	source_group(src FILES ${MODULE_SRC_})
@@ -196,13 +207,4 @@ function(add_stream_module module_dir)
 	)
 endfunction(add_stream_module)
 
-add_stream_module(geoip GeoIP)
-
-install(TARGETS ${PROJECT_NAME}
-	RUNTIME DESTINATION sbin
-	LIBRARY DESTINATION modules
-	ARCHIVE DESTINATION lib
-)
-install(DIRECTORY conf DESTINATION .)
-install(DIRECTORY etc/docs/html DESTINATION .)
-install(DIRECTORY etc/logs DESTINATION .)
+add_stream_module(geoip GeoIP)	
