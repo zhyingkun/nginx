@@ -45,9 +45,9 @@
 #endif
 
 
-#ifndef NGX_HAVE_EPOLLEXCLUSIVE
-#define NGX_HAVE_EPOLLEXCLUSIVE  1
-#endif
+// #ifndef NGX_HAVE_EPOLLEXCLUSIVE
+// #define NGX_HAVE_EPOLLEXCLUSIVE  1
+// #endif
 
 
 #ifndef NGX_HAVE_O_PATH
