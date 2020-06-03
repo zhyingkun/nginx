@@ -21,6 +21,7 @@ addons:
       - geoip
       - gd
       - pcre
+      - libxml2
     update: true
 
 script:
