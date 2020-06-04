@@ -93,12 +93,20 @@ typedef enum {
   NGX_ERROR_ERR,
   NGX_ERROR_INFO,
   NGX_ERROR_IGNORE_ECONNRESET,
-  NGX_ERROR_IGNORE_EINVAL
+  NGX_ERROR_IGNORE_EINVAL,
 } ngx_connection_log_error_e;
 
-typedef enum { NGX_TCP_NODELAY_UNSET = 0, NGX_TCP_NODELAY_SET, NGX_TCP_NODELAY_DISABLED } ngx_connection_tcp_nodelay_e;
+typedef enum {
+  NGX_TCP_NODELAY_UNSET = 0,
+  NGX_TCP_NODELAY_SET,
+  NGX_TCP_NODELAY_DISABLED,
+} ngx_connection_tcp_nodelay_e;
 
-typedef enum { NGX_TCP_NOPUSH_UNSET = 0, NGX_TCP_NOPUSH_SET, NGX_TCP_NOPUSH_DISABLED } ngx_connection_tcp_nopush_e;
+typedef enum {
+  NGX_TCP_NOPUSH_UNSET = 0,
+  NGX_TCP_NOPUSH_SET,
+  NGX_TCP_NOPUSH_DISABLED,
+} ngx_connection_tcp_nopush_e;
 
 #define NGX_LOWLEVEL_BUFFERED 0x0f
 #define NGX_SSL_BUFFERED 0x01

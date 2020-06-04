@@ -151,7 +151,11 @@ char* ngx_conf_parse(ngx_conf_t* cf, ngx_str_t* filename) {
   ngx_int_t rc;
   ngx_buf_t buf;
   ngx_conf_file_t *prev, conf_file;
-  enum { parse_file = 0, parse_block, parse_param } type;
+  enum {
+    parse_file = 0,
+    parse_block,
+    parse_param,
+  } type;
 
 #if (NGX_SUPPRESS_WARN)
   fd = NGX_INVALID_FILE;
@@ -1324,10 +1328,8 @@ char* ngx_conf_set_bitmask_slot(ngx_conf_t* cf, ngx_command_t* cmd, void* conf) 
 
 #if 0
 
-char *
-ngx_conf_unsupported(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
-{
-    return "unsupported on this platform";
+char* ngx_conf_unsupported(ngx_conf_t* cf, ngx_command_t* cmd, void* conf) {
+  return "unsupported on this platform";
 }
 
 #endif

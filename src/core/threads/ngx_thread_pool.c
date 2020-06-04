@@ -249,7 +249,7 @@ static void* ngx_thread_pool_cycle(void* data) {
   ngx_thread_task_t* task;
 
 #if 0
-    ngx_time_update();
+  ngx_time_update();
 #endif
 
   ngx_log_debug1(NGX_LOG_DEBUG_CORE, tp->log, 0, "thread in pool \"%V\" started", &tp->name);
@@ -294,7 +294,7 @@ static void* ngx_thread_pool_cycle(void* data) {
     }
 
 #if 0
-        ngx_time_update();
+    ngx_time_update();
 #endif
 
     ngx_log_debug2(NGX_LOG_DEBUG_CORE, tp->log, 0, "run task #%ui in thread pool \"%V\"", task->id, &tp->name);

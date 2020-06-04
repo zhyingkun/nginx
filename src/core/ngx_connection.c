@@ -235,22 +235,18 @@ ngx_int_t ngx_set_inherited_sockets(ngx_cycle_t* cycle) {
     }
 
 #if 0
-        /* SO_SETFIB is currently a set only option */
+    /* SO_SETFIB is currently a set only option */
 
 #if (NGX_HAVE_SETFIB)
 
-        olen = sizeof(int);
+    olen = sizeof(int);
 
-        if (getsockopt(ls[i].fd, SOL_SOCKET, SO_SETFIB,
-                       (void *) &ls[i].setfib, &olen)
-            == -1)
-        {
-            ngx_log_error(NGX_LOG_ALERT, cycle->log, ngx_socket_errno,
-                          "getsockopt(SO_SETFIB) %V failed, ignored",
-                          &ls[i].addr_text);
+    if (getsockopt(ls[i].fd, SOL_SOCKET, SO_SETFIB, (void*)&ls[i].setfib, &olen) == -1) {
+      ngx_log_error(
+          NGX_LOG_ALERT, cycle->log, ngx_socket_errno, "getsockopt(SO_SETFIB) %V failed, ignored", &ls[i].addr_text);
 
-            ls[i].setfib = -1;
-        }
+      ls[i].setfib = -1;
+    }
 
 #endif
 #endif
@@ -749,18 +745,17 @@ void ngx_configure_listening_sockets(ngx_cycle_t* cycle) {
 #endif
 
 #if 0
-        if (1) {
-            int tcp_nodelay = 1;
+    if (1) {
+      int tcp_nodelay = 1;
 
-            if (setsockopt(ls[i].fd, IPPROTO_TCP, TCP_NODELAY,
-                       (const void *) &tcp_nodelay, sizeof(int))
-                == -1)
-            {
-                ngx_log_error(NGX_LOG_ALERT, cycle->log, ngx_socket_errno,
-                              "setsockopt(TCP_NODELAY) %V failed, ignored",
-                              &ls[i].addr_text);
-            }
-        }
+      if (setsockopt(ls[i].fd, IPPROTO_TCP, TCP_NODELAY, (const void*)&tcp_nodelay, sizeof(int)) == -1) {
+        ngx_log_error(NGX_LOG_ALERT,
+                      cycle->log,
+                      ngx_socket_errno,
+                      "setsockopt(TCP_NODELAY) %V failed, ignored",
+                      &ls[i].addr_text);
+      }
+    }
 #endif
 
     if (ls[i].listen) {
