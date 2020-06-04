@@ -61,3 +61,23 @@ make 命令会自动编译好各个模块
 export CPATH=/usr/local/opt/openssl/include
 export LIBRARY_PATH=/usr/local/opt/openssl/lib
 ```
+
+2. 针对 Ubuntu 安装依赖：
+
+```bash
+sudo apt-get install libxslt1-dev -y
+sudo apt-get install libpcre3-dev -y
+sudo apt-get install libssl-dev -y
+sudo apt-get install libgeoip-dev -y
+sudo apt-get install libgd-dev -y
+```
+
+3. 针对 CentOS 安装依赖：
+
+```bash
+yum install -y openssl-devel.x86_64
+yum install -y libxml2-devel.x86_64
+yum install -y libxslt-devel.x86_64
+yum install -y gd-devel.x86_64
+yum install -y GeoIP-devel.x86_64
+```
